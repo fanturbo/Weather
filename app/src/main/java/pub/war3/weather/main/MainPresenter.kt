@@ -9,7 +9,8 @@ import pub.war3.weather.api.RxSchedulers
 
 class MainPresenter(private val mainView: MainView) {
     fun getWeatherInfo(location: String) {
-        ApiClient.iWeatherApi?.getWeather(location)?.compose(RxSchedulers.applySchedulers())
-                ?.subscribe({ weatherData -> mainView.showWeather(weatherData) }) { throwable -> mainView.showError(throwable.message) }
+        ApiClient.getInstance()?.getWeather(location)?.compose(RxSchedulers.applySchedulers())
+                ?.subscribe({ weatherData -> mainView.showWeather(weatherData) })
+                { throwable -> mainView.showError(throwable.message) }
     }
 }

@@ -9,7 +9,9 @@ import retrofit2.converter.gson.GsonConverterFactory
  * Created by snail on 16/11/8.
  */
 class ApiClient private constructor() {
-    val baseUrl = "http://api.map.baidu.com/";
+    private val baseUrl = "http://api.map.baidu.com/";
+    private var retrofit: Retrofit? = null
+    private var weatherApi: IWeatherApi? = null
 
     init {
         val okHttpClient = OkHttpClient.Builder()
@@ -19,12 +21,13 @@ class ApiClient private constructor() {
                 .addConverterFactory(GsonConverterFactory.create())
                 .addCallAdapterFactory(RxJavaCallAdapterFactory.create())
                 .build()
-        iWeatherApi = retrofit!!.create<IWeatherApi>(IWeatherApi::class.java!!)
+        weatherApi = retrofit!!.create<IWeatherApi>(IWeatherApi::class.java)
     }
 
     companion object {
-        private var retrofit: Retrofit? = null
-        var iWeatherApi: IWeatherApi? = null
-
+        private var iWeatherApi: IWeatherApi? = ApiClient().weatherApi
+        fun getInstance(): IWeatherApi? {
+            return iWeatherApi
+        }
     }
 }

@@ -25,7 +25,12 @@ class MainActivity : AppCompatActivity(), MainView {
     }
 
     override fun showWeather(weather: WeatherDataEntity) {
-        forecast_list.adapter = WeatherAdapter(weather.results[0].weather_data)
+        if (weather != null && weather.results != null) {
+            val weather_data = weather.results[0].weather_data
+            if (weather_data != null) {
+                forecast_list.adapter = WeatherAdapter(weather_data)
+            }
+        }
     }
 
     override fun showError(message: String?) {
