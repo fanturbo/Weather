@@ -17,15 +17,15 @@ import pub.war3.weather.R
 /**
  * Created by turbo on 2017/6/15.
  */
-class WeatherAdapter(val data: List<WeatherDataBean>) : RecyclerView.Adapter<WeatherAdapter.WeatherViewHoloder>() {
+class WeatherAdapter(val data: List<WeatherDataBean>, val itemClick: (WeatherDataBean, Int) -> Unit) : RecyclerView.Adapter<WeatherAdapter.WeatherViewHoloder>() {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): WeatherViewHoloder {
         if (viewType == 0) {
             val view = LayoutInflater.from(parent.ctx).inflate(R.layout.item_weather_today, parent, false)
-            return TodayWeatherViewHolder(view)
+            return TodayWeatherViewHolder(view, itemClick)
         } else {
             val view = LayoutInflater.from(parent.ctx).inflate(R.layout.item_weather_content, parent, false)
-            return WeatherViewHoloder(view)
+            return WeatherViewHoloder(view, itemClick)
         }
     }
 
@@ -42,9 +42,9 @@ class WeatherAdapter(val data: List<WeatherDataBean>) : RecyclerView.Adapter<Wea
     }
 
     //比较一下两个ViewHolder,一个用了with，一个没用
-    open class WeatherViewHoloder(view: View) : RecyclerView.ViewHolder(view) {
+    open class WeatherViewHoloder(view: View, val itemClick: (WeatherDataBean, Int) -> Unit) : RecyclerView.ViewHolder(view) {
         open fun setWeatherData(weatherDataEntity: WeatherDataBean) {
-            with(weatherDataEntity){
+            with(weatherDataEntity) {
                 itemView.tv_date.text = date
                 Glide.with(itemView.ctx)
                         .load(dayPictureUrl)
@@ -57,11 +57,12 @@ class WeatherAdapter(val data: List<WeatherDataBean>) : RecyclerView.Adapter<Wea
                         .diskCacheStrategy(DiskCacheStrategy.ALL)
                         .into(itemView.iv_night)
                 itemView.tv_weather.text = weather
+                itemView.setOnClickListener({ itemClick(this, adapterPosition) })
             }
         }
     }
 
-    class TodayWeatherViewHolder(val view: View) : WeatherViewHoloder(view) {
+    class TodayWeatherViewHolder(view: View, itemClick: (WeatherDataBean, Int) -> Unit) : WeatherViewHoloder(view, itemClick) {
         override fun setWeatherData(weatherDataEntity: WeatherDataBean) {
             itemView.tv_today_date.text = weatherDataEntity.date
             Glide.with(itemView.ctx)
@@ -76,6 +77,7 @@ class WeatherAdapter(val data: List<WeatherDataBean>) : RecyclerView.Adapter<Wea
                     .into(itemView.iv_today_night)
             itemView.tv_today_weather.text = weatherDataEntity.weather
             itemView.tv_today_wind.text = weatherDataEntity.wind
+            itemView.setOnClickListener({ itemClick(weatherDataEntity, adapterPosition) })
         }
     }
 
